@@ -188,6 +188,16 @@ async def on_confirm(
     )
     await callback.answer("Booking confirmed!")
 
+    # Notify admin
+    if callback.from_user.id != settings.admin_id:
+        await callback.bot.send_message(
+            settings.admin_id,
+            f"New booking by <b>{user.display_name}</b>:\n\n"
+            f"Date: {selected_date.strftime('%a %b %d, %Y')}\n"
+            f"Time: {start.strftime('%H:%M')} – {end.strftime('%H:%M')}\n"
+            f"Booking ID: #{reservation.id}",
+        )
+
 
 @router.callback_query(ConfirmCallback.filter(F.action == "no"), BookingStates.confirming)
 async def on_confirm_cancel(
