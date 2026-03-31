@@ -1,0 +1,15 @@
+[project]
+name = "tennis-court-bot"
+version = "0.1.0"
+description = "Telegram bot for tennis court reservation"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aiogram>=3.20,<4",
+    "sqlalchemy[asyncio]>=2.0,<3",
+    "aiosqlite>=0.20",
+    "pydantic-settings>=2.0",
+]
+
+[dependency-groups]
+dev = []
