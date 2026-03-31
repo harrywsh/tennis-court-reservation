@@ -48,6 +48,19 @@ Telegram bot for managing tennis court reservations with an allowlist-based acce
 - [uv](https://docs.astral.sh/uv/) package manager
 - A Telegram bot token from [@BotFather](https://t.me/BotFather)
 
+### Create a Telegram Bot
+
+1. Open Telegram and search for [@BotFather](https://t.me/BotFather)
+2. Send `/newbot` and follow the prompts to choose a name and username
+3. Copy the bot token you receive — you'll need it for `BOT_TOKEN` in `.env`
+4. (Optional) Send `/setcommands` to BotFather and paste the following to enable command autocomplete:
+   ```
+   book - Reserve a time slot
+   mybookings - View your upcoming bookings
+   help - List available commands
+   ```
+5. To find your Telegram user ID (needed for `ADMIN_ID`), message [@userinfobot](https://t.me/userinfobot) and it will reply with your ID
+
 ### Installation
 
 ```bash
