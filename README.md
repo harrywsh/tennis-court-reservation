@@ -44,8 +44,7 @@ Telegram bot for managing tennis court reservations with an allowlist-based acce
 
 ### Prerequisites
 
-- Python 3.12+
-- [uv](https://docs.astral.sh/uv/) package manager
+- Docker and Docker Compose
 - A Telegram bot token from [@BotFather](https://t.me/BotFather)
 
 ### Create a Telegram Bot
@@ -64,14 +63,8 @@ Telegram bot for managing tennis court reservations with an allowlist-based acce
 ### Installation
 
 ```bash
-# Clone and enter the project
 git clone https://github.com/harrywsh/tennis-court-reservation.git
 cd tennis-court-reservation
-
-# Install dependencies
-uv sync
-
-# Configure environment
 cp .env.example .env
 # Edit .env with your values
 ```
@@ -91,8 +84,20 @@ cp .env.example .env
 ### Running
 
 ```bash
-uv run python -m src.bot
+# Start the bot
+docker compose up -d
+
+# View logs
+docker compose logs -f bot
+
+# Rebuild after code changes
+docker compose up -d --build
+
+# Stop
+docker compose down
 ```
+
+The SQLite database is persisted in a Docker volume (`bot-data`).
 
 ## Project Structure
 
