@@ -52,7 +52,7 @@ Telegram bot for managing tennis court reservations with an allowlist-based acce
 
 ```bash
 # Clone and enter the project
-git clone <repo-url>
+git clone https://github.com/harrywsh/tennis-court-reservation.git
 cd tennis-court-reservation
 
 # Install dependencies
