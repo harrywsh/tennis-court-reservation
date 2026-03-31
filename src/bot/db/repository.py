@@ -1,6 +1,6 @@
-from datetime import date, time
+from datetime import date, datetime, time, timezone
 
-from sqlalchemy import delete, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -58,7 +58,11 @@ async def toggle_reservations(session: AsyncSession) -> bool:
 # ── Reservation ──────────────────────────────────────────────
 
 async def get_booked_times(session: AsyncSession, target_date: date) -> list[time]:
-    stmt = select(Reservation.start_time).where(Reservation.date == target_date)
+    stmt = (
+        select(Reservation.start_time)
+        .where(Reservation.date == target_date)
+        .where(Reservation.cancelled_at.is_(None))
+    )
     return list((await session.execute(stmt)).scalars().all())
 
 
@@ -88,6 +92,7 @@ async def get_user_reservations(
         .join(AllowedUser)
         .where(AllowedUser.telegram_id == telegram_id)
         .where(Reservation.date >= date.today())
+        .where(Reservation.cancelled_at.is_(None))
         .order_by(Reservation.date, Reservation.start_time)
         .options(selectinload(Reservation.user))
     )
@@ -98,6 +103,7 @@ async def get_all_reservations(session: AsyncSession) -> list[Reservation]:
     stmt = (
         select(Reservation)
         .where(Reservation.date >= date.today())
+        .where(Reservation.cancelled_at.is_(None))
         .order_by(Reservation.date, Reservation.start_time)
         .options(selectinload(Reservation.user))
     )
@@ -106,9 +112,9 @@ async def get_all_reservations(session: AsyncSession) -> list[Reservation]:
 
 async def cancel_reservation(session: AsyncSession, reservation_id: int) -> bool:
     reservation = await session.get(Reservation, reservation_id)
-    if reservation is None:
+    if reservation is None or reservation.cancelled_at is not None:
         return False
-    await session.delete(reservation)
+    reservation.cancelled_at = datetime.now(timezone.utc)
     return True
 
 
@@ -120,9 +126,10 @@ async def cancel_reservation_if_owned(
         .join(AllowedUser)
         .where(Reservation.id == reservation_id)
         .where(AllowedUser.telegram_id == telegram_id)
+        .where(Reservation.cancelled_at.is_(None))
     )
     reservation = (await session.execute(stmt)).scalar_one_or_none()
     if reservation is None:
         return False
-    await session.delete(reservation)
+    reservation.cancelled_at = datetime.now(timezone.utc)
     return True

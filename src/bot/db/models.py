@@ -32,6 +32,8 @@ class Reservation(Base):
     end_time: Mapped[time] = mapped_column(Time)
     created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(timezone.utc))
 
+    cancelled_at: Mapped[datetime | None] = mapped_column(default=None)
+
     user: Mapped["AllowedUser"] = relationship(back_populates="reservations")
 
 
